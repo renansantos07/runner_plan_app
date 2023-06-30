@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:runner_plan_app/pages/auth/auth_or_app_page.dart';
 import 'package:runner_plan_app/pages/dashboard_page.dart';
+import 'dart:io';
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -71,7 +72,17 @@ const darkColorScheme = ColorScheme(
   scrim: Color(0xFF000000),
 );
 
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+  }
+}
+
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const MyApp());
 }
 
@@ -87,9 +98,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(
           listTileTheme: ListTileThemeData(
-            iconColor: Color(0xFFA2C9FF),
+            iconColor: Color(0xFFD3E4FF),
             titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Color(0xFFA2C9FF),
+                  color: Color(0xFFD3E4FF),
                 ),
           ),
           useMaterial3: true,

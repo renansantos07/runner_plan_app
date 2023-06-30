@@ -18,6 +18,8 @@ abstract class AuthInterface {
   );
 
   Future<void> logout();
+  Future<void> forgetPassword(String email);
+  Future<void> getCref(String? cref);
 
   factory AuthInterface() {
     // return AuthMockService();

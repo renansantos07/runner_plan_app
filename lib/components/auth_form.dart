@@ -1,23 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:runner_plan_app/core/model/auth_model.dart';
+import 'package:runner_plan_app/util/validators/PortuguesePasswordValidators.dart';
+import 'package:runner_plan_app/util/validators/common_validators.dart';
+import 'package:flutter_pw_validator/flutter_pw_validator.dart';
+import 'core/forget_password.dart';
 
 class AuthForm extends StatefulWidget {
   final void Function(AuthModel) onSubmit;
+  final void Function(String email) onForgetPassWord;
 
-  const AuthForm({
-    key,
-    required this.onSubmit,
-  });
+  const AuthForm({key, required this.onSubmit, required this.onForgetPassWord});
 
   @override
   State<AuthForm> createState() => _AuthFormState();
 }
 
 class _AuthFormState extends State<AuthForm> {
+  final TextEditingController passwordController = TextEditingController();
+  final GlobalKey<FlutterPwValidatorState> validatorKey =
+      GlobalKey<FlutterPwValidatorState>();
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthModel();
   bool _passwordVisible = true;
   bool _confirmPasswordVisible = true;
+  bool _passwordIsStrong = false;
 
   void _submit() {
     final isValid = _formKey.currentState?.validate() ?? false;
@@ -25,6 +31,19 @@ class _AuthFormState extends State<AuthForm> {
     if (isValid) {
       widget.onSubmit(_formData);
     }
+  }
+
+  void _forgetPassword() {
+    showModalBottomSheet<void>(
+      isScrollControlled: true,
+      context: context,
+      builder: (BuildContext context) {
+        return ForgetPassword(
+          email: _formData.email,
+          onSendEmail: (email) => widget.onForgetPassWord(email),
+        );
+      },
+    );
   }
 
   @override
@@ -58,15 +77,17 @@ class _AuthFormState extends State<AuthForm> {
               decoration: InputDecoration(labelText: 'E-mail'),
               validator: (_email) {
                 final email = _email ?? '';
-                if (!email.contains('@')) {
+                if (!CommonValidators().isEmail(email)) {
                   return 'E-mail informado não é válido.';
                 }
+
                 return null;
               },
             ),
             TextFormField(
               key: ValueKey('password'),
-              initialValue: _formData.password,
+              // initialValue: _formData.password,
+              controller: passwordController,
               onChanged: (password) => _formData.password = password,
               obscureText: _passwordVisible,
               decoration: InputDecoration(
@@ -75,7 +96,6 @@ class _AuthFormState extends State<AuthForm> {
                   icon: Icon(
                     // Based on passwordVisible state choose the icon
                     _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Theme.of(context).primaryColorDark,
                   ),
                   onPressed: () {
                     // Update the state i.e. toogle the state of passwordVisible variable
@@ -87,65 +107,118 @@ class _AuthFormState extends State<AuthForm> {
               ),
               validator: (_password) {
                 final password = _password ?? '';
-                if (_formData.isSignup && password.length < 6) {
-                  return 'Senha deve ter no mínimo 6 caracteres.';
+                if (_formData.isSignup && !_passwordIsStrong) {
+                  return 'Senha muito fraca.';
                 }
+
+                if (_formData.isLogin && password.trim().isEmpty) {
+                  return 'Senha deve ser preenchida.';
+                }
+
                 return null;
               },
             ),
-            if (_formData.isSignup)
-              TextFormField(
-                key: ValueKey('confirm_password'),
-                initialValue: _formData.confirm_password,
-                onChanged: (confirm_password) =>
-                    _formData.confirm_password = confirm_password,
-                obscureText: _confirmPasswordVisible,
-                decoration: InputDecoration(
-                  labelText: 'Confirmação de senha',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      // Based on passwordVisible state choose the icon
-                      _confirmPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                    onPressed: () {
-                      // Update the state i.e. toogle the state of passwordVisible variable
-                      setState(() {
-                        _confirmPasswordVisible = !_confirmPasswordVisible;
-                      });
-                    },
+            if (_formData.isLogin)
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                  onPressed: _forgetPassword,
+                  child: Text(
+                    "Esqueci minha senha",
+                    style: Theme.of(context)
+                        .textTheme
+                        .labelSmall!
+                        .copyWith(color: Theme.of(context).colorScheme.primary),
                   ),
                 ),
-                validator: (_confirm_password) {
-                  final confirm_password = _confirm_password ?? '';
-                  if (confirm_password.trim().length < 6) {
-                    return 'Senha deve ter no mínimo 6 caracteres.';
-                  }
+              ),
+            if (_formData.isSignup)
+              SizedBox(
+                height: 5,
+              ),
+            //   TextFormField(
+            //     key: ValueKey('confirm_password'),
+            //     initialValue: _formData.confirm_password,
+            //     onChanged: (confirm_password) =>
+            //         _formData.confirm_password = confirm_password,
+            //     obscureText: _confirmPasswordVisible,
+            //     decoration: InputDecoration(
+            //       labelText: 'Confirmação de senha',
+            //       suffixIcon: IconButton(
+            //         icon: Icon(
+            //           // Based on passwordVisible state choose the icon
+            //           _confirmPasswordVisible
+            //               ? Icons.visibility
+            //               : Icons.visibility_off,
+            //         ),
+            //         onPressed: () {
+            //           // Update the state i.e. toogle the state of passwordVisible variable
+            //           setState(() {
+            //             _confirmPasswordVisible = !_confirmPasswordVisible;
+            //           });
+            //         },
+            //       ),
+            //     ),
+            //     validator: (_confirm_password) {
+            //       final confirm_password = _confirm_password ?? '';
+            //       if (confirm_password.trim().length < 6) {
+            //         return 'Senha deve ter no mínimo 6 caracteres.';
+            //       }
 
-                  if (confirm_password.trim() != _formData.password.trim()) {
-                    return 'Senhas não estão iguais.';
-                  }
-                  return null;
+            //       if (confirm_password.trim() != _formData.password.trim()) {
+            //         return 'Senhas não estão iguais.';
+            //       }
+            //       return null;
+            //     },
+            //   ),
+            if (_formData.isSignup)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FlutterPwValidator(
+                  key: validatorKey,
+                  controller: passwordController,
+                  minLength: 8,
+                  uppercaseCharCount: 1,
+                  lowercaseCharCount: 1,
+                  numericCharCount: 1,
+                  specialCharCount: 1,
+                  width: 400,
+                  height: 180,
+                  strings: PortugueseStrings(),
+                  onSuccess: () {
+                    setState(() {
+                      _passwordIsStrong = true;
+                    });
+                  },
+                  onFail: () {
+                    setState(() {
+                      _passwordIsStrong = false;
+                    });
+                  },
+                ),
+              ),
+            const SizedBox(height: 15),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: _submit,
+                child: Text(_formData.isLogin ? 'Entrar' : 'Cadastrar'),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: TextButton(
+                child: Text(
+                  _formData.isLogin
+                      ? 'Criar uma nova conta?'
+                      : 'Já possui conta?',
+                ),
+                onPressed: () {
+                  setState(() {
+                    _formData.toggleAuthMode();
+                  });
                 },
               ),
-            const SizedBox(height: 12),
-            ElevatedButton(
-              onPressed: _submit,
-              child: Text(_formData.isLogin ? 'Entrar' : 'Cadastrar'),
-            ),
-            TextButton(
-              child: Text(
-                _formData.isLogin
-                    ? 'Criar uma nova conta?'
-                    : 'Já possui conta?',
-              ),
-              onPressed: () {
-                setState(() {
-                  _formData.toggleAuthMode();
-                });
-              },
             ),
           ],
         ),

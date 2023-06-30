@@ -38,6 +38,8 @@ dependencies:
   provider: ^6.0.0
   firebase_core: ^2.14.0
   firebase_auth: ^4.6.3
+  flutter_pw_validator: ^1.6.0
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
