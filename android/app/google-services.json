@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "777950203214",
+    "project_id": "runnerplan-dev",
+    "storage_bucket": "runnerplan-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777950203214:android:05277949a8abb0df60a21f",
+        "android_client_info": {
+          "package_name": "com.example.runner_plan_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777950203214-9st06qk6dbfuk9b185g55iu5kgr101tu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWbX6YMrgkI7yW0XmTICSLMPAuKgr_OxI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "777950203214-9st06qk6dbfuk9b185g55iu5kgr101tu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "777950203214-9gii0robr4b2cv0h079irm9duf5d9t3m.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.runnerPlanApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
