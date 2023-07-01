@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:runner_plan_app/core/model/auth_model.dart';
+import 'package:runner_plan_app/core/model/common/auth_model.dart';
 import 'package:runner_plan_app/util/validators/PortuguesePasswordValidators.dart';
 import 'package:runner_plan_app/util/validators/common_validators.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import 'core/forget_password.dart';
+import 'common/forget_password.dart';
 
 class AuthForm extends StatefulWidget {
   final void Function(AuthModel) onSubmit;
@@ -66,6 +66,21 @@ class _AuthFormState extends State<AuthForm> {
                   final name = _name ?? '';
                   if (name.trim().length < 5) {
                     return 'Nome deve ter no mínimo 5 caracteres.';
+                  }
+                  return null;
+                },
+              ),
+            if (_formData.isSignup)
+              TextFormField(
+                key: const ValueKey('cref'),
+                initialValue: _formData.cref,
+                onChanged: (cref) => _formData.cref = cref,
+                decoration: const InputDecoration(
+                    labelText: 'CREF', hintText: "123456-G/SP"),
+                validator: (_cref) {
+                  final cref = _cref ?? '';
+                  if (cref.trim().length < 11) {
+                    return 'Cref deve ter no mínimo 11 caracteres.';
                   }
                   return null;
                 },

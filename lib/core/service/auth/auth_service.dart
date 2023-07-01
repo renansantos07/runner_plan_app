@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart';
 import 'package:runner_plan_app/core/exception/custom_firebase_exception.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
-import 'package:runner_plan_app/core/model/session_user_model.dart';
+import 'package:runner_plan_app/core/interface/user/user_interface.dart';
+import 'package:runner_plan_app/core/model/common/session_user_model.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:runner_plan_app/core/model/personal/personal_modal.dart';
 
 class AuthService implements AuthInterface {
   static SessionUser? _sessionUser;
@@ -47,32 +51,38 @@ class AuthService implements AuthInterface {
   }
 
   @override
-  Future<void> signup(String name, String email, String password) async {
+  Future<void> signup(
+      String name, String cref, String email, String password) async {
     try {
-      final authInstance = FirebaseAuth.instance;
+      final signup = await Firebase.initializeApp(
+        name: 'userSignup',
+        options: Firebase.app().options,
+      );
+      final authInstance = FirebaseAuth.instanceFor(app: signup);
+
       UserCredential credential =
           await authInstance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      if (credential != null) {
+      if (credential.user != null) {
         // 2. atualizar os atributos do usuário
         await credential.user?.sendEmailVerification();
         await credential.user?.updateDisplayName(name);
+
+        // 2.5 fazer o login do usuário
+        await login(email, password);
+
+        // 3. salvar usuário no banco de dados (opcional)
+        _sessionUser = _firebaseUserToSessionUser(credential.user!, name, cref);
+        await UserInterface().savePersonalUser(_sessionUser!);
       }
+
+      await signup.delete();
     } on FirebaseException catch (error) {
       throw CustomFirebaseException(error.code);
     }
-  }
-
-  static SessionUser _firebaseUserToSessionUser(User user, [String? name]) {
-    return SessionUser(
-      id: user.uid,
-      name: name ?? user.displayName ?? user.email!.split('@')[0],
-      email: user.email!,
-      imageURL: user.photoURL ?? 'assets/images/avatar.png',
-    );
   }
 
   @override
@@ -96,5 +106,15 @@ class AuthService implements AuthInterface {
 
     bool isCref = response.body.contains(cref);
     bool isName = response.body.contains('Fabiano');
+  }
+
+  static SessionUser _firebaseUserToSessionUser(User user,
+      [String? name, String? cref]) {
+    return SessionUser(
+        id: user.uid,
+        name: name ?? user.displayName ?? user.email!.split('@')[0],
+        email: user.email!,
+        imageURL: user.photoURL ?? 'assets/images/avatar.png',
+        personal: PersonalModel(cref: cref ?? ''));
   }
 }

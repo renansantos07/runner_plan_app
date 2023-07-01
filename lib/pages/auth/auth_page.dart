@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:runner_plan_app/components/auth_form.dart';
 import 'package:runner_plan_app/core/exception/custom_firebase_exception.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
-import 'package:runner_plan_app/core/model/auth_model.dart';
+import 'package:runner_plan_app/core/model/common/auth_model.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({key});
@@ -47,6 +47,7 @@ class _AuthPageState extends State<AuthPage> {
         // Signup
         await AuthInterface().signup(
           authModel.name,
+          authModel.cref,
           authModel.email,
           authModel.password,
         );

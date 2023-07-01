@@ -2,9 +2,9 @@ enum AuthMode { Signup, Login }
 
 class AuthModel {
   String name = '';
+  String cref = '';
   String email = '';
   String password = '';
-  String confirm_password = '';
   AuthMode _mode = AuthMode.Login;
 
   bool get isLogin {

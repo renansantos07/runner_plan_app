@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:runner_plan_app/components/core/app_drawer.dart';
-import 'package:runner_plan_app/components/core/notification_drawer.dart';
+import 'package:runner_plan_app/components/common/app_drawer.dart';
+import 'package:runner_plan_app/components/common/notification_drawer.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
-import 'package:runner_plan_app/core/model/session_user_model.dart';
+import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 import 'package:runner_plan_app/pages/auth/auth_page.dart';
 import 'package:runner_plan_app/pages/communication/communication_page.dart';
-import 'package:runner_plan_app/pages/dashboard_page.dart';
+import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'package:runner_plan_app/pages/follow_up/follow_up_page.dart';
 import 'package:runner_plan_app/pages/workouts/workouts_page.dart';
 

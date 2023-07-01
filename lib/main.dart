@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:runner_plan_app/pages/auth/auth_or_app_page.dart';
-import 'package:runner_plan_app/pages/dashboard_page.dart';
+import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'dart:io';
 
 const lightColorScheme = ColorScheme(

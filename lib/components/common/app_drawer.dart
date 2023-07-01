@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
-import 'package:runner_plan_app/core/model/session_user_model.dart';
+import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
