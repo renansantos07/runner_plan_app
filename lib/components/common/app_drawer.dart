@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:runner_plan_app/components/common/user_image.dart';
+import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 
@@ -23,17 +25,15 @@ class AppDrawer extends StatelessWidget {
             padding: const EdgeInsets.only(top: 50),
             alignment: Alignment.topRight,
             child: ListTile(
-              leading: Padding(
-                padding: const EdgeInsets.only(right: 15),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: AssetImage(_sessionUser.imageURL),
-                    )
-                  ],
-                ),
+              leading: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  UserImage(
+                    imageUrl: _sessionUser.imageURL,
+                    width: 50,
+                    height: 50,
+                  ),
+                ],
               ),
               title: Text(
                 _sessionUser.name,
@@ -73,6 +73,23 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               // Update the state of the app.
               // ...
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.person,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+            ),
+            title: Text(
+              "Perfil",
+              style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  ),
+            ),
+            onTap: () {
+              Navigator.of(context).pushNamed(
+                AppRoutes.Profile,
+              );
             },
           ),
           ListTile(

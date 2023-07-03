@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/pages/auth/auth_or_app_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'dart:io';
+
+import 'package:runner_plan_app/pages/profile/profile_page.dart';
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -93,7 +96,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Runner Plan',
       themeMode: ThemeMode.dark,
       theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
       darkTheme: ThemeData(
@@ -105,8 +108,11 @@ class MyApp extends StatelessWidget {
           ),
           useMaterial3: true,
           colorScheme: darkColorScheme),
-      home: const AuthOrAppPage(),
       debugShowCheckedModeBanner: false,
+      routes: {
+        AppRoutes.AuthOrHome: (ctx) => const AuthOrAppPage(),
+        AppRoutes.Profile: (ctx) => const ProfilePage(),
+      },
     );
   }
 }

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:runner_plan_app/components/common/app_drawer.dart';
 import 'package:runner_plan_app/components/common/notification_drawer.dart';
+import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
-import 'package:runner_plan_app/pages/auth/auth_page.dart';
 import 'package:runner_plan_app/pages/communication/communication_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'package:runner_plan_app/pages/follow_up/follow_up_page.dart';
 import 'package:runner_plan_app/pages/workouts/workouts_page.dart';
+
+import '../../components/common/user_image.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -55,17 +57,25 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Theme.of(context).colorScheme.background,
               centerTitle: true,
               title: ListTile(
-                leading: Padding(
-                  padding: const EdgeInsets.only(right: 15),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage(_sessionUser.imageURL),
-                      )
-                    ],
-                  ),
+                leading: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    GestureDetector(
+                      child: Hero(
+                        tag: _sessionUser.id,
+                        child: UserImage(
+                          imageUrl: _sessionUser.imageURL,
+                          width: 50,
+                          height: 50,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.of(context).pushNamed(
+                          AppRoutes.Profile,
+                        );
+                      },
+                    )
+                  ],
                 ),
                 title: Text(
                   'Olá,',
