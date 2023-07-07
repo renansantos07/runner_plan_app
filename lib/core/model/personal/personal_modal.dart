@@ -1,5 +1,5 @@
 class PersonalModel {
-  final String cref;
+  String cref;
 
   PersonalModel({required this.cref});
 }

@@ -1,60 +1,71 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:runner_plan_app/components/common/user_image.dart';
 import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
+import 'package:runner_plan_app/core/service/user/user_provider.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final SessionUser _sessionUser = AuthInterface().sessionUser!;
+    final _user = Provider.of<UserProvider>(context).user;
 
     return Drawer(
       width: MediaQuery.of(context).size.width,
       child: ListView(
-        // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: [
           Container(
             decoration:
                 BoxDecoration(color: Theme.of(context).colorScheme.primary),
-            height: 200,
             width: double.infinity,
-            padding: const EdgeInsets.only(top: 50),
             alignment: Alignment.topRight,
-            child: ListTile(
-              leading: Column(
+            padding: EdgeInsets.only(bottom: 20),
+            child: Center(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  UserImage(
-                    imageUrl: _sessionUser.imageURL,
-                    width: 50,
+                children: [
+                  SizedBox(
                     height: 50,
                   ),
+                  ListTile(
+                    leading: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Builder(
+                          builder: (context) => IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                              size: 25,
+                            ),
+                            onPressed: () => Navigator.of(context).pop(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  UserImage(
+                    imageUrl: _user.imageURL,
+                    width: 150,
+                    height: 150,
+                  ),
+                  Text(
+                    '${_user.name} ${_user.surname}',
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
+                  Text(
+                    _user.email,
+                    style: Theme.of(context).textTheme.titleSmall!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                  ),
                 ],
-              ),
-              title: Text(
-                _sessionUser.name,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-              ),
-              subtitle: Text(
-                _sessionUser.email,
-                style: Theme.of(context).textTheme.titleSmall!.copyWith(
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-              ),
-              trailing: IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
               ),
             ),
           ),

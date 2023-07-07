@@ -2,6 +2,7 @@ enum AuthMode { Signup, Login }
 
 class AuthModel {
   String name = '';
+  String surname = '';
   String cref = '';
   String email = '';
   String password = '';

@@ -1,3 +1,4 @@
+import 'package:runner_plan_app/core/model/common/auth_model.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 import 'package:runner_plan_app/core/service/auth/auth_service.dart';
 
@@ -6,12 +7,7 @@ abstract class AuthInterface {
 
   Stream<SessionUser?> get userChanges;
 
-  Future<void> signup(
-    String name,
-    String cref,
-    String email,
-    String password,
-  );
+  Future<void> signup(AuthModel authModel);
 
   Future<void> login(
     String email,

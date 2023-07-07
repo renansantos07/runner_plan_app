@@ -8,19 +8,67 @@ import 'package:runner_plan_app/core/interface/user/user_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 
 class UserService implements UserInterface {
+  final _collection = 'users';
+
   @override
   Future<void> savePersonalUser(SessionUser user) async {
     final store = FirebaseFirestore.instance;
-    final docRef = store.collection('users').doc(user.id);
+    final docRef = store.collection(_collection).doc(user.id);
 
     await docRef.set({
       'name': user.name,
+      'surname': user.surname,
       'email': user.email,
       'imageURL': user.imageURL,
       'roles': {'personal': true}
     });
 
-    await docRef.collection('personal').add({'cref': user.personal?.cref});
+    // await docRef.collection('personal').add({'cref': user.personal?.cref});
+  }
+
+  Future<void> _updateUserImageUrl(String userId, String imageUrl) async {
+    final userRef =
+        FirebaseFirestore.instance.collection(_collection).doc(userId);
+
+    await userRef.update({
+      'imageURL': imageUrl,
+    });
+  }
+
+  Future<SessionUser> updateUser(SessionUser user) async {
+    try {
+      final userRef = FirebaseFirestore.instance
+          .collection(_collection)
+          .withConverter(
+              fromFirestore: _firestoreToSessionUser,
+              toFirestore: _sessionUserToFirestore)
+          .doc(user.id);
+
+      await userRef.update({
+        'name': user.name,
+        'surname': user.surname,
+        'email': user.email,
+      });
+
+      final sessionUser = await userRef.get();
+
+      return sessionUser.data()!;
+    } on FirebaseException catch (error) {
+      throw CustomFirebaseException(error.code);
+    }
+  }
+
+  Future<SessionUser> getUser(String userId) async {
+    final userRef = await FirebaseFirestore.instance
+        .collection(_collection)
+        .withConverter(
+            fromFirestore: _firestoreToSessionUser,
+            toFirestore: _sessionUserToFirestore)
+        .doc(userId);
+
+    final sessionUser = await userRef.get();
+
+    return sessionUser.data()!;
   }
 
   @override
@@ -41,10 +89,38 @@ class UserService implements UserInterface {
       final responseUrl = await imageRef.getDownloadURL();
 
       await user.updatePhotoURL(responseUrl);
+      await _updateUserImageUrl(user.uid, responseUrl);
 
       return responseUrl;
     } on FirebaseException catch (error) {
       throw CustomFirebaseException(error.code);
     }
+  }
+
+  // SessionUser => Map<String, dynamic>
+  Map<String, dynamic> _sessionUserToFirestore(
+    SessionUser sessionUser,
+    SetOptions? options,
+  ) {
+    return {
+      'name': sessionUser.name,
+      'surname': sessionUser.surname,
+      'email': sessionUser.email,
+      'imageURL': sessionUser.imageURL,
+    };
+  }
+
+  // Map<String, dynamic> => SessionUser
+  SessionUser _firestoreToSessionUser(
+    DocumentSnapshot<Map<String, dynamic>> doc,
+    SnapshotOptions? options,
+  ) {
+    return SessionUser(
+      id: doc.id,
+      name: doc['name'],
+      surname: doc['surname'],
+      email: doc['email'],
+      imageURL: doc['imageURL'],
+    );
   }
 }

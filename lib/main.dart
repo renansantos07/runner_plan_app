@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:runner_plan_app/core/app_routes.dart';
+import 'package:runner_plan_app/core/service/user/user_provider.dart';
 import 'package:runner_plan_app/pages/auth/auth_or_app_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'dart:io';
@@ -95,24 +96,43 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Runner Plan',
-      themeMode: ThemeMode.dark,
-      theme: ThemeData(useMaterial3: true, colorScheme: lightColorScheme),
-      darkTheme: ThemeData(
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+      child: MaterialApp(
+        title: 'Runner Plan',
+        themeMode: ThemeMode.dark,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: lightColorScheme,
           listTileTheme: ListTileThemeData(
-            iconColor: Color(0xFFD3E4FF),
+            iconColor: Color(0xFF1460A5),
             titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
-                  color: Color(0xFFD3E4FF),
+                  color: Color(0xFF1460A5),
                 ),
           ),
-          useMaterial3: true,
-          colorScheme: darkColorScheme),
-      debugShowCheckedModeBanner: false,
-      routes: {
-        AppRoutes.AuthOrHome: (ctx) => const AuthOrAppPage(),
-        AppRoutes.Profile: (ctx) => const ProfilePage(),
-      },
+        ),
+        darkTheme: ThemeData(
+            inputDecorationTheme: InputDecorationTheme(
+                filled: true,
+                contentPadding: const EdgeInsets.all(8.0),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+                fillColor: Colors.transparent),
+            listTileTheme: ListTileThemeData(
+              iconColor: Color(0xFFD3E4FF),
+              titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+                    color: Color(0xFFD3E4FF),
+                  ),
+            ),
+            useMaterial3: true,
+            colorScheme: darkColorScheme),
+        debugShowCheckedModeBanner: false,
+        routes: {
+          AppRoutes.AuthOrHome: (ctx) => const AuthOrAppPage(),
+          AppRoutes.Profile: (ctx) => const ProfilePage(),
+        },
+      ),
     );
   }
 }

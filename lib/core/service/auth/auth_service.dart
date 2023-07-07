@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:runner_plan_app/core/exception/custom_firebase_exception.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/interface/user/user_interface.dart';
+import 'package:runner_plan_app/core/model/common/auth_model.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:runner_plan_app/core/model/personal/personal_modal.dart';
@@ -16,7 +17,8 @@ class AuthService implements AuthInterface {
     (controller) async {
       final authChanges = FirebaseAuth.instance.authStateChanges();
       await for (final user in authChanges) {
-        _sessionUser = user == null ? null : _firebaseUserToSessionUser(user);
+        _sessionUser =
+            user == null ? null : await _firebaseUserToSessionUser(user);
         controller.add(_sessionUser);
       }
     },
@@ -51,8 +53,7 @@ class AuthService implements AuthInterface {
   }
 
   @override
-  Future<void> signup(
-      String name, String cref, String email, String password) async {
+  Future<void> signup(AuthModel authModel) async {
     try {
       final signup = await Firebase.initializeApp(
         name: 'userSignup',
@@ -62,20 +63,21 @@ class AuthService implements AuthInterface {
 
       UserCredential credential =
           await authInstance.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
+        email: authModel.email,
+        password: authModel.password,
       );
 
       if (credential.user != null) {
         // 2. atualizar os atributos do usuário
         await credential.user?.sendEmailVerification();
-        await credential.user?.updateDisplayName(name);
+        await credential.user?.updateDisplayName(authModel.name);
 
         // 2.5 fazer o login do usuário
-        await login(email, password);
+        await login(authModel.email, authModel.password);
 
         // 3. salvar usuário no banco de dados (opcional)
-        _sessionUser = _firebaseUserToSessionUser(credential.user!, name, cref);
+        _sessionUser =
+            await _firebaseUserToSessionUser(credential.user!, authModel);
         await UserInterface().savePersonalUser(_sessionUser!);
       }
 
@@ -108,13 +110,25 @@ class AuthService implements AuthInterface {
     bool isName = response.body.contains('Fabiano');
   }
 
-  static SessionUser _firebaseUserToSessionUser(User user,
-      [String? name, String? cref]) {
-    return SessionUser(
-        id: user.uid,
-        name: name ?? user.displayName ?? user.email!.split('@')[0],
-        email: user.email!,
-        imageURL: user.photoURL ?? 'assets/images/avatar.png',
-        personal: PersonalModel(cref: cref ?? ''));
+  static Future<SessionUser> _firebaseUserToSessionUser(User user,
+      [AuthModel? authModel]) async {
+    SessionUser sessionUser;
+
+    if (authModel == null) {
+      sessionUser = await UserInterface().getUser(user.uid);
+    } else {
+      final name = authModel != null
+          ? authModel.name
+          : user.displayName ?? user.email!.split('@')[0];
+
+      sessionUser = SessionUser(
+          id: user.uid,
+          name: name,
+          surname: authModel != null ? authModel.surname : '',
+          email: user.email!,
+          imageURL: user.photoURL ?? 'assets/images/avatar.png');
+    }
+
+    return sessionUser;
   }
 }

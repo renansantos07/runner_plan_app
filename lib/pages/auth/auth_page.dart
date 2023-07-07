@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:runner_plan_app/components/auth_form.dart';
+import 'package:runner_plan_app/components/auth/auth_form.dart';
 import 'package:runner_plan_app/core/exception/custom_firebase_exception.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/model/common/auth_model.dart';
@@ -45,12 +45,7 @@ class _AuthPageState extends State<AuthPage> {
         );
       } else {
         // Signup
-        await AuthInterface().signup(
-          authModel.name,
-          authModel.cref,
-          authModel.email,
-          authModel.password,
-        );
+        await AuthInterface().signup(authModel);
       }
     } on CustomFirebaseException catch (error) {
       _showError(error.toString());

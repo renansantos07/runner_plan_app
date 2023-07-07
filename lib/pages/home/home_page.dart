@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:runner_plan_app/components/common/app_drawer.dart';
 import 'package:runner_plan_app/components/common/notification_drawer.dart';
 import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
+import 'package:runner_plan_app/core/service/user/user_provider.dart';
 import 'package:runner_plan_app/pages/communication/communication_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'package:runner_plan_app/pages/follow_up/follow_up_page.dart';
@@ -48,7 +50,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final SessionUser _sessionUser = AuthInterface().sessionUser!;
+    final _user = Provider.of<UserProvider>(context).user;
+
     return Scaffold(
       appBar: _selectedIndex == 0
           ? AppBar(
@@ -62,9 +65,9 @@ class _HomePageState extends State<HomePage> {
                   children: <Widget>[
                     GestureDetector(
                       child: Hero(
-                        tag: _sessionUser.id,
+                        tag: _user.id,
                         child: UserImage(
-                          imageUrl: _sessionUser.imageURL,
+                          imageUrl: _user.imageURL,
                           width: 50,
                           height: 50,
                         ),
@@ -84,7 +87,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                 ),
                 subtitle: Text(
-                  _sessionUser.name,
+                  _user.name,
                   style: Theme.of(context).textTheme.titleMedium!.copyWith(
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),

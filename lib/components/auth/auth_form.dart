@@ -3,7 +3,7 @@ import 'package:runner_plan_app/core/model/common/auth_model.dart';
 import 'package:runner_plan_app/util/validators/PortuguesePasswordValidators.dart';
 import 'package:runner_plan_app/util/validators/common_validators.dart';
 import 'package:flutter_pw_validator/flutter_pw_validator.dart';
-import 'common/forget_password.dart';
+import '../common/forget_password.dart';
 
 class AuthForm extends StatefulWidget {
   final void Function(AuthModel) onSubmit;
@@ -71,20 +71,43 @@ class _AuthFormState extends State<AuthForm> {
                 },
               ),
             if (_formData.isSignup)
-              TextFormField(
-                key: const ValueKey('cref'),
-                initialValue: _formData.cref,
-                onChanged: (cref) => _formData.cref = cref,
-                decoration: const InputDecoration(
-                    labelText: 'CREF', hintText: "123456-G/SP"),
-                validator: (_cref) {
-                  final cref = _cref ?? '';
-                  if (cref.trim().length < 11) {
-                    return 'Cref deve ter no mínimo 11 caracteres.';
-                  }
-                  return null;
-                },
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: TextFormField(
+                  key: const ValueKey('surname'),
+                  initialValue: _formData.surname,
+                  onChanged: (surname) => _formData.surname = surname,
+                  decoration: const InputDecoration(labelText: 'Sobrenome'),
+                  validator: (_surname) {
+                    final surname = _surname ?? '';
+                    if (surname.trim().isEmpty) {
+                      return 'Sobrenome deve ser preenchido.';
+                    }
+                    return null;
+                  },
+                ),
               ),
+            if (_formData.isSignup)
+              Container(
+                margin: const EdgeInsets.only(top: 10),
+                child: TextFormField(
+                  key: const ValueKey('cref'),
+                  initialValue: _formData.cref,
+                  onChanged: (cref) => _formData.cref = cref,
+                  decoration: const InputDecoration(
+                      labelText: 'CREF', hintText: "123456-G/SP"),
+                  validator: (_cref) {
+                    final cref = _cref ?? '';
+                    if (cref.trim().length < 11) {
+                      return 'Cref deve ter no mínimo 11 caracteres.';
+                    }
+                    return null;
+                  },
+                ),
+              ),
+            SizedBox(
+              height: 10,
+            ),
             TextFormField(
               key: ValueKey('email'),
               initialValue: _formData.email,
@@ -98,6 +121,9 @@ class _AuthFormState extends State<AuthForm> {
 
                 return null;
               },
+            ),
+            SizedBox(
+              height: 10,
             ),
             TextFormField(
               key: ValueKey('password'),

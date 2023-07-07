@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:runner_plan_app/components/common/user_image.dart';
+import 'package:runner_plan_app/components/profile/profile_form.dart';
 import 'package:runner_plan_app/core/interface/Auth/auth_interface.dart';
+import 'package:runner_plan_app/core/interface/user/user_interface.dart';
 import 'package:runner_plan_app/core/model/common/session_user_model.dart';
+import 'package:runner_plan_app/core/service/user/user_provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -13,6 +17,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage>
     with TickerProviderStateMixin {
   late final TabController _tabController;
+  final keyFormProfile = GlobalKey<ProfileFormState>();
 
   @override
   void initState() {
@@ -28,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final SessionUser _sessionUser = AuthInterface().sessionUser!;
+    final user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -39,6 +44,27 @@ class _ProfilePageState extends State<ProfilePage>
           "Perfil",
           style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
         ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 15),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Builder(
+                  builder: (context) => TextButton(
+                    child: Text(
+                      "Salvar",
+                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                          color: Theme.of(context).colorScheme.onPrimary),
+                    ),
+                    onPressed: () =>
+                        {keyFormProfile.currentState?.saveProfile()},
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -60,9 +86,9 @@ class _ProfilePageState extends State<ProfilePage>
                           Column(
                             children: <Widget>[
                               Hero(
-                                tag: _sessionUser.id,
+                                tag: user.id,
                                 child: UserImage(
-                                  imageUrl: _sessionUser.imageURL,
+                                  imageUrl: user.imageURL,
                                   width: 150,
                                   height: 150,
                                   canChange: true,
@@ -74,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage>
                             height: 10,
                           ),
                           Text(
-                            _sessionUser.name,
+                            '${user.name} ${user.surname}',
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineLarge!
@@ -84,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ),
                           ),
                           Text(
-                            _sessionUser.email,
+                            user.email,
                             style: Theme.of(context)
                                 .textTheme
                                 .titleSmall!
@@ -101,7 +127,8 @@ class _ProfilePageState extends State<ProfilePage>
               ),
             ),
             Container(
-              height: 900,
+              constraints: BoxConstraints(
+                  minHeight: 100, minWidth: double.infinity, maxHeight: 400),
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(50),
@@ -110,10 +137,16 @@ class _ProfilePageState extends State<ProfilePage>
                 color: Theme.of(context).colorScheme.background,
                 boxShadow: [
                   BoxShadow(
-                      color: Theme.of(context).colorScheme.primary,
-                      spreadRadius: 15),
+                    color: Theme.of(context).colorScheme.primary,
+                    spreadRadius: 15,
+                  ),
+                  BoxShadow(
+                      color: Theme.of(context).colorScheme.background,
+                      offset: const Offset(0, 20)),
                 ],
               ),
+              child: Center(
+                  child: ProfileForm(key: keyFormProfile, userId: user.id)),
             )
           ],
         ),
