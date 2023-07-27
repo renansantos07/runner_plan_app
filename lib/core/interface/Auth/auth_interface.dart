@@ -7,6 +7,8 @@ abstract class AuthInterface {
 
   Stream<SessionUser?> get userChanges;
 
+  Future<void> signupPersonal(AuthModel authModel);
+  Future<void> signupAthlete(AuthModel authModel);
   Future<void> signup(AuthModel authModel);
 
   Future<void> login(

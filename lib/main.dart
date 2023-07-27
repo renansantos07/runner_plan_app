@@ -3,10 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:runner_plan_app/core/app_routes.dart';
 import 'package:runner_plan_app/core/service/user/user_provider.dart';
 import 'package:runner_plan_app/pages/auth/auth_or_app_page.dart';
+import 'package:runner_plan_app/pages/auth/new_athlete_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'dart:io';
 
-import 'package:runner_plan_app/pages/profile/profile_page.dart';
+import 'package:runner_plan_app/pages/user/profile_page.dart';
 
 const lightColorScheme = ColorScheme(
   brightness: Brightness.light,
@@ -100,7 +101,7 @@ class MyApp extends StatelessWidget {
       providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
       child: MaterialApp(
         title: 'Runner Plan',
-        themeMode: ThemeMode.dark,
+        themeMode: ThemeMode.light,
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: lightColorScheme,
@@ -131,6 +132,7 @@ class MyApp extends StatelessWidget {
         routes: {
           AppRoutes.AuthOrHome: (ctx) => const AuthOrAppPage(),
           AppRoutes.Profile: (ctx) => const ProfilePage(),
+          AppRoutes.NewAthlete: (ctx) => const NewAthletePage()
         },
       ),
     );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DashboardAtletaPage extends StatelessWidget {
-  const DashboardAtletaPage({Key? key}) : super(key: key);
+class DashboardAthletePage extends StatelessWidget {
+  const DashboardAthletePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

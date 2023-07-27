@@ -9,7 +9,7 @@ import 'package:runner_plan_app/core/service/user/user_provider.dart';
 import 'package:runner_plan_app/pages/communication/communication_page.dart';
 import 'package:runner_plan_app/pages/dashboard/dashboard_page.dart';
 import 'package:runner_plan_app/pages/follow_up/follow_up_page.dart';
-import 'package:runner_plan_app/pages/workouts/workouts_page.dart';
+import 'package:runner_plan_app/pages/workouts/workouts_home_page.dart';
 
 import '../../components/common/user_image.dart';
 
@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
         'screen': const DashboardPage(),
       },
       {
-        'screen': const WorkoutsPage(),
+        'screen': const WorkoutsHomePage(),
       },
       {
         'screen': const CommunicationPage(),
@@ -128,18 +128,13 @@ class _HomePageState extends State<HomePage> {
         showSelectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Icon(Icons.home),
             label: 'Inicio',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.rule_rounded),
+            icon: Icon(Icons.calendar_month),
             label: 'Treinos',
           ),
-          // BottomNavigationBarItem(
-          //   backgroundColor: Colors.transparent,
-          //   icon: const SizedBox.shrink(),
-          //   label: "",
-          // ),
           BottomNavigationBarItem(
             icon: Icon(Icons.chat),
             label: 'Comunicação',

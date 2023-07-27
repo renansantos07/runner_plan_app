@@ -5,6 +5,7 @@ class SessionUser {
   String name;
   String surname;
   String email;
+  String? cref;
   String imageURL;
 
   SessionUser(
@@ -12,5 +13,6 @@ class SessionUser {
       required this.name,
       required this.surname,
       required this.email,
+      this.cref,
       this.imageURL = "assets/images/avatar.png"});
 }

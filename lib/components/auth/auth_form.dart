@@ -22,7 +22,6 @@ class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
   final _formData = AuthModel();
   bool _passwordVisible = true;
-  bool _confirmPasswordVisible = true;
   bool _passwordIsStrong = false;
 
   void _submit() {
@@ -105,7 +104,7 @@ class _AuthFormState extends State<AuthForm> {
                   },
                 ),
               ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
@@ -122,7 +121,7 @@ class _AuthFormState extends State<AuthForm> {
                 return null;
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextFormField(
@@ -174,44 +173,9 @@ class _AuthFormState extends State<AuthForm> {
                 ),
               ),
             if (_formData.isSignup)
-              SizedBox(
+              const SizedBox(
                 height: 5,
               ),
-            //   TextFormField(
-            //     key: ValueKey('confirm_password'),
-            //     initialValue: _formData.confirm_password,
-            //     onChanged: (confirm_password) =>
-            //         _formData.confirm_password = confirm_password,
-            //     obscureText: _confirmPasswordVisible,
-            //     decoration: InputDecoration(
-            //       labelText: 'Confirmação de senha',
-            //       suffixIcon: IconButton(
-            //         icon: Icon(
-            //           // Based on passwordVisible state choose the icon
-            //           _confirmPasswordVisible
-            //               ? Icons.visibility
-            //               : Icons.visibility_off,
-            //         ),
-            //         onPressed: () {
-            //           // Update the state i.e. toogle the state of passwordVisible variable
-            //           setState(() {
-            //             _confirmPasswordVisible = !_confirmPasswordVisible;
-            //           });
-            //         },
-            //       ),
-            //     ),
-            //     validator: (_confirm_password) {
-            //       final confirm_password = _confirm_password ?? '';
-            //       if (confirm_password.trim().length < 6) {
-            //         return 'Senha deve ter no mínimo 6 caracteres.';
-            //       }
-
-            //       if (confirm_password.trim() != _formData.password.trim()) {
-            //         return 'Senhas não estão iguais.';
-            //       }
-            //       return null;
-            //     },
-            //   ),
             if (_formData.isSignup)
               Align(
                 alignment: Alignment.centerLeft,

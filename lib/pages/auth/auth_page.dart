@@ -45,7 +45,7 @@ class _AuthPageState extends State<AuthPage> {
         );
       } else {
         // Signup
-        await AuthInterface().signup(authModel);
+        await AuthInterface().signupPersonal(authModel);
       }
     } on CustomFirebaseException catch (error) {
       _showError(error.toString());

@@ -15,15 +15,42 @@ class UserService implements UserInterface {
     final store = FirebaseFirestore.instance;
     final docRef = store.collection(_collection).doc(user.id);
 
-    await docRef.set({
-      'name': user.name,
-      'surname': user.surname,
-      'email': user.email,
-      'imageURL': user.imageURL,
-      'roles': {'personal': true}
-    });
+    try {
+      await docRef.set({
+        'name': user.name,
+        'surname': user.surname,
+        'email': user.email,
+        'imageURL': user.imageURL,
+        'roles': {
+          'personal': true,
+          'athlete': false,
+        },
+        'cref': user.cref
+      });
+    } on FirebaseException catch (error) {
+      throw CustomFirebaseException(error.code);
+    }
+  }
 
-    // await docRef.collection('personal').add({'cref': user.personal?.cref});
+  @override
+  Future<void> saveAthleteUser(SessionUser user) async {
+    final store = FirebaseFirestore.instance;
+    final docRef = store.collection(_collection).doc(user.id);
+
+    try {
+      await docRef.set({
+        'name': user.name,
+        'surname': user.surname,
+        'email': user.email,
+        'imageURL': user.imageURL,
+        'roles': {
+          'personal': false,
+          'athlete': true,
+        },
+      });
+    } on FirebaseException catch (error) {
+      throw CustomFirebaseException(error.code);
+    }
   }
 
   Future<void> _updateUserImageUrl(String userId, String imageUrl) async {

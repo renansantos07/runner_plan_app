@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -53,7 +54,26 @@ class AuthService implements AuthInterface {
   }
 
   @override
-  Future<void> signup(AuthModel authModel) async {
+  Future<void> signupAthlete(AuthModel authModel) async {
+    authModel.password = _generatePassword();
+    UserCredential credential = await signup(authModel);
+
+    final userAthlete =
+        await _firebaseUserToSessionUser(credential.user!, authModel);
+    await UserInterface().saveAthleteUser(userAthlete);
+  }
+
+  @override
+  Future<void> signupPersonal(AuthModel authModel) async {
+    UserCredential credential = await signup(authModel);
+
+    _sessionUser =
+        await _firebaseUserToSessionUser(credential.user!, authModel);
+    await UserInterface().savePersonalUser(_sessionUser!);
+  }
+
+  @override
+  Future<UserCredential> signup(AuthModel authModel) async {
     try {
       final signup = await Firebase.initializeApp(
         name: 'userSignup',
@@ -73,15 +93,13 @@ class AuthService implements AuthInterface {
         await credential.user?.updateDisplayName(authModel.name);
 
         // 2.5 fazer o login do usuário
-        await login(authModel.email, authModel.password);
+        // await login(authModel.email, authModel.password);
 
         // 3. salvar usuário no banco de dados (opcional)
-        _sessionUser =
-            await _firebaseUserToSessionUser(credential.user!, authModel);
-        await UserInterface().savePersonalUser(_sessionUser!);
       }
 
       await signup.delete();
+      return credential;
     } on FirebaseException catch (error) {
       throw CustomFirebaseException(error.code);
     }
@@ -126,9 +144,32 @@ class AuthService implements AuthInterface {
           name: name,
           surname: authModel != null ? authModel.surname : '',
           email: user.email!,
+          cref: authModel.cref,
           imageURL: user.photoURL ?? 'assets/images/avatar.png');
     }
 
     return sessionUser;
+  }
+
+  String _generatePassword({
+    bool letter = true,
+    bool isNumber = true,
+    bool isSpecial = true,
+  }) {
+    const length = 20;
+    const letterLowerCase = "abcdefghijklmnopqrstuvwxyz";
+    const letterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const number = '0123456789';
+    const special = '@#%^*>\$@?/[]=+';
+
+    String chars = "";
+    if (letter) chars += '$letterLowerCase$letterUpperCase';
+    if (isNumber) chars += '$number';
+    if (isSpecial) chars += '$special';
+
+    return List.generate(length, (index) {
+      final indexRandom = Random.secure().nextInt(chars.length);
+      return chars[indexRandom];
+    }).join('');
   }
 }
